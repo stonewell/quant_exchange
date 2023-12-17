@@ -1,0 +1,35 @@
+{
+  "name": "quant_exchange",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "d3-dsv": "^3.0.1",
+    "d3-format": "^3.1.0",
+    "next": "14.0.4",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-financial-charts": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/d3-dsv": "^3.0.7",
+    "@types/d3-format": "^3.0.4",
+    "@types/d3-time-format": "^4.0.3",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "eslint-plugin-storybook": "^0.6.15",
+    "postcss": "^8",
+    "storybook": "^7.6.4",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
+}
