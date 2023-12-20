@@ -7,5 +7,9 @@ class StockSchema(ma.Schema):
     attrs = ma.fields.List(ma.fields.String())
 
 
-class StockQueryArgsSchema(ma.Schema):
+class StocksQueryArgsSchema(ma.Schema):
     attrs = ma.fields.List(ma.fields.String())
+
+class StockQueryArgsSchema(ma.Schema):
+    start_date=ma.fields.Date()
+    end_date=ma.fields.Date()
