@@ -6,70 +6,85 @@ import { IOHLCData } from "./iOHLCData";
 const parseDate = timeParse("%Y-%m-%d");
 
 const parseData = () => {
-    return (d: any) => {
-        const date = parseDate(d.date);
-        if (date === null) {
-            d.date = new Date(Number(d.date));
-        } else {
-            d.date = new Date(date);
-        }
+  return (d: any) => {
+    const date = parseDate(d.d);
+    if (date === null) {
+      d.date = new Date(Number(d.d));
+    } else {
+      d.date = new Date(date);
+    }
 
-        for (const key in d) {
-            if (key !== "date" && Object.prototype.hasOwnProperty.call(d, key)) {
-                d[key] = +d[key];
-            }
-        }
+    for (const k in d) {
+      var key = ''
+      if (k === 'd')
+        key = 'date'
+      if (k === 'o')
+        key = 'open'
+      if (k === 'c')
+        key = 'close'
+      if (k === 'h')
+        key = 'high'
+      if (k === 'l')
+        key = 'low'
+      if (k === 'v')
+        key = 'volume'
 
-        return d as IOHLCData;
-    };
+      if (key !== "date" && Object.prototype.hasOwnProperty.call(d, k)) {
+        d[key] = +d[k];
+      }
+    }
+
+    console.log(d);
+    return d as IOHLCData;
+  };
 };
 
 interface WithOHLCDataProps {
-    readonly data: IOHLCData[];
+  readonly data: IOHLCData[];
 }
 
 interface WithOHLCState {
-    data?: IOHLCData[];
-    message: string;
+  data?: IOHLCData[];
+  message: string;
 }
 
-export function withOHLCData(dataSet = "DAILY") {
-    return <TProps extends WithOHLCDataProps>(OriginalComponent: React.ComponentClass<TProps>) => {
-        return class WithOHLCData extends React.Component<Omit<TProps, "data">, WithOHLCState> {
-            public constructor(props: Omit<TProps, "data">) {
-                super(props);
+export function withOHLCData(stockId = '', dataSet = "daily") {
+  return <TProps extends WithOHLCDataProps>(OriginalComponent: React.ComponentClass<TProps>) => {
+    return class WithOHLCData extends React.Component<Omit<TProps, "data">, WithOHLCState> {
+      public constructor(props: Omit<TProps, "data">) {
+        super(props);
 
-                this.state = {
-                    message: `Loading ${dataSet} data...`,
-                };
-            }
-
-            public componentDidMount() {
-                fetch(
-                    `https://raw.githubusercontent.com/reactivemarkets/react-financial-charts/master/packages/stories/src/data/${dataSet}.tsv`,
-                )
-                    .then((response) => response.text())
-                    .then((data) => tsvParse(data, parseData()))
-                    .then((data) => {
-                        this.setState({
-                            data,
-                        });
-                    })
-                    .catch(() => {
-                        this.setState({
-                            message: `Failed to fetch data.`,
-                        });
-                    });
-            }
-
-            public render() {
-                const { data, message } = this.state;
-                if (data === undefined) {
-                    return <div className="center">{message}</div>;
-                }
-
-                return <OriginalComponent {...(this.props as TProps)} data={data} />;
-            }
+        this.state = {
+          message: `Loading ${dataSet} data...`,
         };
+      }
+
+      public componentDidMount() {
+        fetch(
+          `/api/stocks/${stockId}/${dataSet}`,
+        )
+          .then((response) => response.json())
+          .then((data) => data.map(parseData()))
+          .then((data) => {
+            this.setState({
+              data,
+            });
+          })
+          .catch(() => {
+            this.setState({
+              message: `Failed to fetch data.`,
+            });
+          });
+      }
+
+      public render() {
+        const { data, message } = this.state;
+        if (data === undefined) {
+          return <div className="center">{message}</div>;
+        }
+
+        return <OriginalComponent {...(this.props as TProps)} data={data} />;
+      }
     };
+  };
 }
