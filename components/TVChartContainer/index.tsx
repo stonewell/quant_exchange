@@ -60,8 +60,6 @@ export const TVChartContainer = (props: Partial<ChartingLibraryWidgetOptions>) =
 
   return (
     <>
-      <header className={styles.VersionHeader}>
-      </header>
       <div ref={chartContainerRef} className={styles.TVChartContainer} />
     </>
   );

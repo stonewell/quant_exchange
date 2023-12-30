@@ -15,10 +15,6 @@ const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
   interval: "1D" as ResolutionString,
   library_path: "/static/charting_library/",
   locale: "en",
-  charts_storage_url: "https://saveload.tradingview.com",
-  charts_storage_api_version: "1.1",
-  client_id: "tradingview.com",
-  user_id: "public_user_id",
   fullscreen: false,
   autosize: true,
 };
@@ -34,7 +30,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>TradingView Charting Library and Next.js</title>
+        <title>Quant Exchange - powered by TradingView</title>
       </Head>
       <Script
         src="/static/datafeeds/udf/dist/bundle.js"
