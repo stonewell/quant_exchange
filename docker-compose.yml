@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  quant_exchange_web:
+    container_name: quant_exchange_web
+    image: quantexchange/web
+    networks:
+      - quant_exchange_net
+    ports:
+      - 3000:3000/tcp
+    restart: unless-stopped
+    environment:
+      API_URL: http://quant_exchange_api:5000
+    depends_on:
+      - quant_exchange_api
+
+  quant_exchange_api:
+    container_name: quant_exchange_api
+    image: quantexchange/api
+    networks:
+      - quant_exchange_net
+    volumes:
+      - /media/share/win/vipdoc_2015_2022:/vipdoc
+      - /home/stone/Work/github/trading_quant/data:/data
+    restart: unless-stopped
+
+networks:
+  quant_exchange_net:
+    name: quant_exchange_net
