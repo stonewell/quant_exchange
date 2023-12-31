@@ -11,7 +11,7 @@ import {
 } from "@/public/static/charting_library/charting_library";
 
 const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
-  symbol: "AAPL",
+  symbol: "000001",
   interval: "1D" as ResolutionString,
   library_path: "/static/charting_library/",
   locale: "en",

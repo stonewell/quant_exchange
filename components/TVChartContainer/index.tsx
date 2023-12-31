@@ -15,7 +15,7 @@ export const TVChartContainer = (props: Partial<ChartingLibraryWidgetOptions>) =
         undefined,
         {
           maxResponseLength: 1000,
-          expectedOrder: "latestFirst",
+          expectedOrder: "earliestFirst",
         }
       ),
       interval: props.interval as ResolutionString,

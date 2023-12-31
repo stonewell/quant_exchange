@@ -2,13 +2,14 @@ import marshmallow as ma
 
 
 class StockDataSchema(ma.Schema):
-  status = ma.Fields.String(data_key='s')
+  status = ma.fields.String(data_key='s')
+  next_time = ma.fields.Int(data_key='nextTime')
   open = ma.fields.List(ma.fields.Float(), data_key='o')
   close = ma.fields.List(ma.fields.Float(), data_key='c')
   high = ma.fields.List(ma.fields.Float(), data_key='h')
   low = ma.fields.List(ma.fields.Float(), data_key='l')
   volume = ma.fields.List(ma.fields.Float(), data_key='v')
-  day = ma.fields.List(ma.fields.Date(), data_key='t')
+  day = ma.fields.List(ma.fields.Int(), data_key='t')
 
 
 class SymbolResolveArgsSchema(ma.Schema):
@@ -34,6 +35,6 @@ class SearchResultSchema(ma.Schema):
   d = ma.fields.String(data_key='description')
   n = ma.fields.String(data_key='full_name')
   e = ma.fields.String(data_key='exchange')
-  s = ma.fields.Float(data_key='symbol')
+  s = ma.fields.String(data_key='symbol')
   ti = ma.fields.String(data_key='ticker')
   t = ma.fields.String(data_key='type')
