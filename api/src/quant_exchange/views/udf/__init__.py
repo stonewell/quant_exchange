@@ -150,6 +150,8 @@ class History(MethodView):
       data = data.loc[
         (data['day'] <= t)
       ]
+
+      c = 990 if c < 1000 else c
       data = data[-c:]
     else:
       data = data.loc[
