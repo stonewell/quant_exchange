@@ -91,7 +91,8 @@ class Symbols(MethodView):
     print(args)
 
     df = load_stock_info()
-    row = df.loc[df['symbol'] == args['s']].iloc[0]
+    row = df.loc[(df['symbol'] == (args['s'][2:]))
+                 & (df['exchange'] == (args['s'][:2]))].iloc[0]
     print(row)
 
     return {
@@ -109,7 +110,7 @@ class Symbols(MethodView):
         "type": config['symbols_types'][row['type'] - 1]['value'],
         "supported_resolutions": ["D", "5"],
         "pricescale": 100,
-        "ticker": row['symbol'],
+        "ticker": row['exchange'] + row['symbol'],
     }
 
 
@@ -132,13 +133,7 @@ class History(MethodView):
 
     print(args, f, t, c)
 
-    df = load_stock_info()
-    row = df.loc[df['symbol'] == args['s']].iloc[0]
-
     price_adj = 1
-
-    if config['symbols_types'][row['type'] - 1]['value'] == 'index':
-      price_adj = 100
 
     d = load_stock_data(args['s'], False)
     data = d[0].data_frame.reset_index()
@@ -225,7 +220,7 @@ class Search(MethodView):
           "n": row['exchange'] + ':' + row['symbol'],
           "e": row['exchange'],
           "s": row['symbol'],
-          "ti": row['symbol'],
+          "ti": row['exchange'] + row['symbol'],
           "t": config['symbols_types'][row['type'] - 1]['value'],
       })
     return result
