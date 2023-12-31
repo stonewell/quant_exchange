@@ -121,11 +121,13 @@ class History(MethodView):
   def get(self, args):
     if not 's' in args or args['s'] == '':
       return {
-        "s": "no_data",
+          "s": "no_data",
       }
 
-    f = pd.Timestamp.fromtimestamp(args['f'], 'UTC').tz_localize(None).round('D')
-    t = pd.Timestamp.fromtimestamp(args['t'], 'UTC').tz_localize(None).round('D')
+    f = pd.Timestamp.fromtimestamp(args['f'],
+                                   'UTC').tz_localize(None).round('D')
+    t = pd.Timestamp.fromtimestamp(args['t'],
+                                   'UTC').tz_localize(None).round('D')
     c = int(args['c']) if 'c' in args else -1
 
     print(args, f, t, c)
@@ -147,17 +149,12 @@ class History(MethodView):
       }
 
     if c > 0:
-      data = data.loc[
-        (data['day'] <= t)
-      ]
+      data = data.loc[(data['day'] <= t)]
 
       c = 990 if c < 1000 else c
       data = data[-c:]
     else:
-      data = data.loc[
-        (data['day'] >= f)
-        & (data['day'] <= t)
-      ]
+      data = data.loc[(data['day'] >= f) & (data['day'] <= t)]
 
     if data.empty:
       return {
@@ -165,13 +162,18 @@ class History(MethodView):
       }
 
     result = {
-        "s": "ok",
-        "t": [day.tz_localize('UTC').round('D').timestamp() for day in data['day'].to_list()],
+        "s":
+        "ok",
+        "t": [
+            day.tz_localize('UTC').round('D').timestamp()
+            for day in data['day'].to_list()
+        ],
         "c": [d * price_adj for d in data['close'].to_list()],
         "o": [d * price_adj for d in data['open'].to_list()],
         "h": [d * price_adj for d in data['high'].to_list()],
         "l": [d * price_adj for d in data['low'].to_list()],
-        "v": data['volume'].to_list()
+        "v":
+        data['volume'].to_list()
     }
 
     return result
@@ -195,6 +197,9 @@ class Search(MethodView):
   def get(self, args):
     print(args)
 
+    if len(args['q']) == 0:
+      return []
+
     types = range(1, 6)
 
     if args['t'] != '':
@@ -206,7 +211,9 @@ class Search(MethodView):
       exchanges = [args['e']]
 
     df = load_stock_info()
-    rows = df.loc[df['symbol'].str.startswith(args['q'], na=False)
+    rows = df.loc[(df['symbol'].str.startswith(args['q'], na=False)
+                   | df['code_name'].str.startswith(args['q'], na=False)
+                   | df['abbr'].str.startswith(args['q'].lower(), na=False))
                   & df['type'].isin(types)
                   & df['exchange'].isin(exchanges)].head(int(args['l']))
     print(rows)

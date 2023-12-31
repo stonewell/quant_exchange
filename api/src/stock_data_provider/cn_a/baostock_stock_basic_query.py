@@ -7,6 +7,7 @@ import pathlib
 import baostock as bs
 import pandas as pd
 from .path_config import module_path, data_path as g_data_path, vipdoc_path
+from pypinyin import lazy_pinyin
 
 
 def convert_symbol(symbol):
@@ -21,11 +22,19 @@ def get_symbol(symbol):
   return '{}{}'.format(parts[0], parts[1])
 
 
+def get_code_name_abbr(name):
+  pinyin_names = lazy_pinyin(name)
+
+  return ''.join([x[0] for x in pinyin_names]).lower()
+
+
 def load_stocks_from_file(data_file):
   df = pd.read_csv(data_file)
 
   df['symbol'] = df['code'].apply(lambda code: code.lower().split('.')[1])
   df['exchange'] = df['code'].apply(lambda code: code.lower().split('.')[0])
+  df['abbr'] = df['code_name'].apply(
+      lambda code_name: get_code_name_abbr(code_name))
 
   return df[df['status'] == 1]
 

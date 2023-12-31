@@ -1,8 +1,9 @@
 FROM python:3.11-alpine AS base
 
+RUN apk update && apk add git
+
 WORKDIR /api
 COPY api ./
-RUN apk update && apk add git
 RUN pip3 install -r requirements.txt
 
 EXPOSE 5000

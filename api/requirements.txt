@@ -6,3 +6,4 @@ baostock
 Flask
 flask_smorest
 python-dotenv
+pypinyin
