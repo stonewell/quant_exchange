@@ -6,6 +6,7 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 
 from quant_exchange.models import udf
+from quant_exchange.context import cache
 
 from stock_data_provider.cn_a import load_stock_data, load_stock_info
 
@@ -78,6 +79,7 @@ config = {
 class Config(MethodView):
 
   @blp.response(200)
+  @cache.memoize(timeout=3600)
   def get(self):
     return config
 
@@ -87,6 +89,7 @@ class Symbols(MethodView):
 
   @blp.response(200)
   @blp.arguments(udf.SymbolResolveArgsSchema, location="query")
+  @cache.memoize(timeout=3600)
   def get(self, args):
     print(args)
 
@@ -119,6 +122,7 @@ class History(MethodView):
 
   @blp.response(200)
   @blp.arguments(udf.HistoryArgsSchema, location="query")
+  @cache.memoize(timeout=3600)
   def get(self, args):
     if not 's' in args or args['s'] == '':
       return {
@@ -146,7 +150,6 @@ class History(MethodView):
     if c > 0:
       data = data.loc[(data['day'] <= t)]
 
-      c = 990 if c < 1000 else c
       data = data[-c:]
     else:
       data = data.loc[(data['day'] >= f) & (data['day'] <= t)]
@@ -189,6 +192,7 @@ class Search(MethodView):
 
   @blp.response(200, udf.SearchResultSchema(many=True))
   @blp.arguments(udf.SearchArgsSchema, location="query")
+  @cache.memoize(timeout=3600)
   def get(self, args):
     print(args)
 
