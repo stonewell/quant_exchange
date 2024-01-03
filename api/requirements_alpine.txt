@@ -1,0 +1,10 @@
+pandas
+-e git+https://github.com/pydata/pandas-datareader.git#egg=pandas-datareader
+scipy
+cachetools
+baostock
+Flask
+flask_smorest
+python-dotenv
+pypinyin
+Flask-Caching
