@@ -6,7 +6,7 @@ from flask.views import MethodView
 from quant_exchange.models import stock
 from quant_exchange import context
 
-from stock_data_provider.cn_a.vip_dataset import load_stock_data
+from stock_data_provider.cn_a import load_stock_data
 
 blp = Blueprint("Stocks",
                 __name__,
@@ -45,7 +45,7 @@ class StockDataDaily(MethodView):
   @blp.arguments(stock.StockQueryArgsSchema, location="query")
   def get(self, data_range, stock_id):
     d = load_stock_data(stock_id, False)
-    data = d[0].data_frame.reset_index()
+    data = d.reset_index()
     value = data.to_dict(orient="records")
 
     return value

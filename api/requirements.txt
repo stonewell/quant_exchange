@@ -8,3 +8,4 @@ flask_smorest
 python-dotenv
 pypinyin
 Flask-Caching
+pyarrow

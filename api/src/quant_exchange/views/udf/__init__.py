@@ -140,7 +140,7 @@ class History(MethodView):
     price_adj = 1
 
     d = load_stock_data(args['s'], False)
-    data = d[0].data_frame.reset_index()
+    data = d.reset_index()
 
     if data.empty or t < data.iloc[0]['day']:
       return {

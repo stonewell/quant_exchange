@@ -90,21 +90,21 @@ def normalize_data(vip_data, tushare_symbol):
 
     vip_data.data_frame = vip_data.data_frame.apply(adj_price, result_type='broadcast', axis=1)
 
-def __load_stock_data(symbol, do_normalize_data = True):
+def __load_stock_data(symbol, _vipdoc_path, do_normalize_data = True):
     symbol = symbol.strip()
 
-    stock_data_looper = StockDataLooper(vipdoc_path)
+    stock_data_looper = StockDataLooper(_vipdoc_path)
 
-    data = VipDataSet(symbol, do_normalize_data)
+    dataSet = VipDataSet(symbol, do_normalize_data)
 
     stock_data_looper.loop_stocks_with_code(process_stock_file,
-                                            data,
+                                            dataSet,
                                             [symbol])
 
-    if data.err:
+    if dataSet.err:
         raise ValueError()
 
-    return data
+    return dataSet
 
 def load_stock_data(symbol, do_normalize_data = True):
     symbols = symbol.split(',')
@@ -112,4 +112,12 @@ def load_stock_data(symbol, do_normalize_data = True):
     if len(symbols) == 0:
         raise ValueError('no symbol:%s' % symbol)
 
-    return list(map(lambda x: __load_stock_data(x, do_normalize_data), symbols))
+    return list(map(lambda x: __load_stock_data(x, vipdoc_path, do_normalize_data), symbols))
+
+def load_stock_data_with_vipdoc_path(symbol, _vipdoc_path, do_normalize_data = True):
+    symbols = symbol.split(',')
+
+    if len(symbols) == 0:
+        raise ValueError('no symbol:%s' % symbol)
+
+    return list(map(lambda x: __load_stock_data(x, _vipdoc_path, do_normalize_data), symbols))
