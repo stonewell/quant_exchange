@@ -61,7 +61,7 @@ export default function HorizontalNonLinearStepper() {
         resolver: yupResolver(currentValidationSchema),
         defaultValues: {
             initialCapital: 100000,
-            timeRangeFrom: dayjs('2023-01-01'),
+            timeRangeFrom: dayjs().subtract(3, 'month'),
             timeRangeTo: dayjs(),
             frequent: 'D',
             baseline: 'HS300',
