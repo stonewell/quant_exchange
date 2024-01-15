@@ -35,8 +35,9 @@ export const metadata: Metadata = {
 const DRAWER_WIDTH = 240;
 
 const LINKS = [
-  { text: 'Home', href: '/', icon: HomeIcon },
-  { text: 'Charting', href: '/charting', icon: StarIcon },
+  { text: '首页', href: '/', icon: HomeIcon },
+  { text: '历史行情', href: '/charting', icon: StarIcon },
+  { text: '策略向导', href: '/strategy', icon: DashboardIcon },
 ];
 
 const PLACEHOLDER_LINKS = [

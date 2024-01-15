@@ -5,21 +5,18 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <Box sx={{ display: 'flex' }}>
       <div>
-        <Alert severity="info" sx={{ mt: 2, mb: 5 }}>
-          <AlertTitle>Hello 👋</AlertTitle>
-          This app uses the Next.js App Router and Material UI v5.
-        </Alert>
         <Grid container rowSpacing={3} columnSpacing={3}>
           <Grid xs={6}>
+            <Link href='/charting'>历史行情</Link>
           </Grid>
           <Grid xs={6}>
+            <Link href='/strategy'>策略向导</Link>
           </Grid>
           <Grid xs={6}>
           </Grid>
@@ -45,7 +42,6 @@ export default function HomePage() {
         <List sx={{ px: 2 }}>
           <ListItem disablePadding>
             <Typography variant="overline" sx={{ fontWeight: 500 }}>
-              On this page
             </Typography>
           </ListItem>
         </List>
