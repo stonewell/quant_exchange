@@ -6,13 +6,15 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
-import FormBackTest from './FormBackTest'
 import { FormProvider, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dayjs, { Dayjs } from 'dayjs';
 import { LoadingButton } from '@mui/lab';
 import { Container } from '@mui/system';
+
+import FormBackTest from './FormBackTest'
+import FormSelectStock from './FormSelectStock'
 
 const steps = ['回测', '选股', '买入卖出', '风险控制'];
 
@@ -21,6 +23,7 @@ function _renderStepContent(step: number) {
         case 1:
             return <FormBackTest />;
         case 2:
+            return <FormSelectStock />;
         case 3:
         default:
             return <span>Not Found</span>;
@@ -45,6 +48,7 @@ const validationSchema = [
     }),
     // Form 2
     Yup.object().shape({
+        stockSelectMethod: Yup.number().min(1).max(2).label('股票选择'),
     }),
     // Form 3
     Yup.object().shape({
@@ -65,6 +69,7 @@ export default function HorizontalNonLinearStepper() {
             timeRangeTo: dayjs(),
             frequent: 'D',
             baseline: 'HS300',
+            stockSelectMethod: 1,
         },
     });
 
