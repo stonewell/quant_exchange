@@ -11,7 +11,6 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dayjs, { Dayjs } from 'dayjs';
 import { LoadingButton } from '@mui/lab';
-import { Container } from '@mui/system';
 
 import FormBackTest from './FormBackTest'
 import FormSelectStock from './FormSelectStock'
@@ -42,6 +41,8 @@ const validationSchema = [
                     return schema
                         .min(timeRangeFrom, '结束回测时间不能小于开始时间');
                 }
+
+                return schema.min(0);
             }),
         frequent: Yup.string().required().label('回测频率'),
         baseline: Yup.string().required().label('回测基准'),
@@ -49,6 +50,15 @@ const validationSchema = [
     // Form 2
     Yup.object().shape({
         stockSelectMethod: Yup.number().min(1).max(2).label('股票选择'),
+        manualSelectedStocks: Yup.array().of(Yup.string())
+            .when('stockSelectMethod', ([stockSelectMethod], schema) => {
+                if (stockSelectMethod == 1) {
+                    return schema.min(1, '至少选择一支股票');
+                }
+
+                return schema.min(0);
+            })
+            .label('手选股票'),
     }),
     // Form 3
     Yup.object().shape({
@@ -70,6 +80,7 @@ export default function HorizontalNonLinearStepper() {
             frequent: 'D',
             baseline: 'HS300',
             stockSelectMethod: 1,
+            manualSelectedStocks: [],
         },
     });
 
