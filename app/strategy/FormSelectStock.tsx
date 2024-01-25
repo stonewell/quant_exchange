@@ -10,6 +10,51 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 import FieldInputRadioGroup from '@/components/fields/FieldInputRadioGroup';
 import FieldInputList from '@/components/fields/FieldInputList';
+import DialogStockSelect from '@/components/dialogs/DialogStockSelect';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemButton from '@mui/material/ListItemButton';
+import Avatar from '@mui/material/Avatar';
+import { ListChildComponentProps } from 'react-window';
+
+function renderRow(props: ListChildComponentProps) {
+  const { index, style, data } = props;
+  const length = data?.length ? data?.length : 0;
+
+  if (index >= length) {
+    return;
+  }
+
+  return (
+    <ListItem
+      style={style}
+      key={index}
+      component="div"
+      disablePadding
+      secondaryAction={
+        <IconButton edge="end" aria-label="delete">
+          <DeleteIcon />
+        </IconButton>
+      }
+    >
+      <ListItemButton
+      >
+        <ListItemAvatar>
+          <Avatar>
+            <ShowChartIcon />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          primary={`${data[index]}`}
+        />
+      </ListItemButton>
+    </ListItem>
+  );
+}
 
 function FormSelectStock() {
   const { control } = useFormContext();
@@ -17,6 +62,7 @@ function FormSelectStock() {
     control,
     name: "stockSelectMethod",
   });
+  const [open, setOpen] = React.useState(false);
 
   const options = [
     {
@@ -31,6 +77,14 @@ function FormSelectStock() {
 
   const onChange = (event: any) => {
     console.log('event', event);
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -56,6 +110,7 @@ function FormSelectStock() {
                 label="manualSelectedStocks"
                 control={control}
                 height={400}
+                renderRow={renderRow}
               />
             </Box>
             <Box sx={{
@@ -68,7 +123,7 @@ function FormSelectStock() {
             }}
             >
               <ButtonGroup variant="contained" aria-label="">
-                <Button>增加</Button>
+                <Button onClick={handleClickOpen}>增加</Button>
                 <Button>清除</Button>
               </ButtonGroup>
             </Box>
@@ -79,6 +134,10 @@ function FormSelectStock() {
             World
           </Typography>
         )}
+        <DialogStockSelect
+          open={open}
+          handleClose={handleClose}
+        />
       </Stack >
     </>
   );
