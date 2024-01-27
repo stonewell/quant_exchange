@@ -34,10 +34,12 @@ function FormSelectStock() {
       label: "手动选股",
       value: 1,
     },
+    /*
     {
       label: "指标选股",
       value: 2,
     },
+     */
   ];
 
   const onChange = (event: any) => {
