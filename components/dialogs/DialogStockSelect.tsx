@@ -155,6 +155,8 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
                 open={open}
                 onClose={handleClose}
                 fullWidth
+                disableRestoreFocus
+                maxWidth="md"
             >
                 <DialogTitle>股票</DialogTitle>
                 <DialogContent sx={{
