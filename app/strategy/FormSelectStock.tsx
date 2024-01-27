@@ -21,43 +21,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Avatar from '@mui/material/Avatar';
 import { ListChildComponentProps } from 'react-window';
 
-function renderRow(props: ListChildComponentProps) {
-  const { index, style, data } = props;
-  const length = data?.length ? data?.length : 0;
-
-  if (index >= length) {
-    return;
-  }
-
-  return (
-    <ListItem
-      style={style}
-      key={index}
-      component="div"
-      disablePadding
-      secondaryAction={
-        <IconButton edge="end" aria-label="delete">
-          <DeleteIcon />
-        </IconButton>
-      }
-    >
-      <ListItemButton
-      >
-        <ListItemAvatar>
-          <Avatar>
-            <ShowChartIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText
-          primary={`${data[index]}`}
-        />
-      </ListItemButton>
-    </ListItem>
-  );
-}
-
 function FormSelectStock() {
-  const { control } = useFormContext();
+  const { control, getValues, setValue } = useFormContext();
   const stockSelectMethod = useWatch({
     control,
     name: "stockSelectMethod",
@@ -86,6 +51,51 @@ function FormSelectStock() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleDelete = (index: number) => {
+    const manualSelectedStocks = getValues('manualSelectedStocks');
+
+    manualSelectedStocks.splice(index, 1);
+    setValue('manualSelectedStocks', manualSelectedStocks);
+  };
+
+  function renderRow(props: ListChildComponentProps) {
+    const { index, style, data } = props;
+    const length = data?.length ? data?.length : 0;
+
+    if (index >= length) {
+      return;
+    }
+
+    return (
+      <ListItem
+        style={style}
+        key={index}
+        component="div"
+        disablePadding
+        secondaryAction={
+          <IconButton edge="end"
+            aria-label="delete"
+            onClick={() => { handleDelete(index); }}>
+            <DeleteIcon />
+          </IconButton>
+        }
+      >
+        <ListItemButton
+        >
+          <ListItemAvatar>
+            <Avatar>
+              <ShowChartIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={`${data[index].description}`}
+            secondary={`${data[index].ticker}`}
+          />
+        </ListItemButton>
+      </ListItem>
+    );
+  }
 
   return (
     <>

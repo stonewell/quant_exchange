@@ -16,9 +16,13 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemButton from '@mui/material/ListItemButton';
 import Avatar from '@mui/material/Avatar';
 import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 
 import { useFormContext } from 'react-hook-form';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+
+import { uniqueFetch } from '@/components/tools/UniqueFetch';
 
 type Props = {
     handleClose: any;
@@ -28,6 +32,7 @@ type Props = {
 export default function DialogStockSelect({ open, handleClose }: Props) {
     const [stocks, setStocks] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
 
     const { setValue, getValues } = useFormContext();
 
@@ -47,6 +52,8 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
     function onSelectStocks() {
         if (checked.length == 0) {
             handleClose();
+            setStocks([]);
+            setChecked([]);
             return;
         }
 
@@ -57,6 +64,23 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
         handleClose();
         setStocks([]);
         setChecked([]);
+    }
+
+    function onInputChange(event: any) {
+        if (event?.target?.value === '') {
+            return;
+        }
+        setLoading(true);
+        uniqueFetch(`/api/udf/search?query=${event.target.value}&limit=20&type=&exchange=`,
+            {
+                signalKey: 'fetch-matched-symbols'
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                setStocks(data);
+                setLoading(false);
+            })
     }
 
     function renderRow(props: ListChildComponentProps) {
@@ -87,6 +111,11 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
                         backgroundColor: "red"
                     },
                 }}
+                secondaryAction={
+                    <ListItemText
+                        primary={`${data[index].ticker}`}
+                    />
+                }
             >
                 <ListItemButton
                     role={undefined}
@@ -112,7 +141,7 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
                         </Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                        primary={`${data[index]}`}
+                        primary={`${data[index].description}`}
                     />
                 </ListItemButton>
             </ListItem>
@@ -125,6 +154,7 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
             <Dialog
                 open={open}
                 onClose={handleClose}
+                fullWidth
             >
                 <DialogTitle>股票</DialogTitle>
                 <DialogContent sx={{
@@ -142,6 +172,7 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
                         label="股票代码或者名称缩写"
                         fullWidth
                         variant="standard"
+                        onChange={onInputChange}
                     />
                     <Divider />
                     <FixedSizeList
@@ -154,6 +185,12 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
                     >
                         {renderRow}
                     </FixedSizeList>
+                    <Backdrop
+                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                        open={loading}
+                    >
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onSelectStocks}>确定</Button>
