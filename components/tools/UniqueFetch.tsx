@@ -11,6 +11,12 @@ export async function uniqueFetch(
     ...(signalKey && { signal: abortAndGetSignalSafe(signalKey) }),
     ...rest
   }).catch(error => {
+    if (error == 'CANCELLED') {
+      return new Response(JSON.stringify([]), {
+        status: 418, // Cancelled
+        statusText: error.message || 'Client Cancel',
+      })
+    }
     if (error.name === 'AbortError') {
       return new Response(JSON.stringify([]), {
         status: 499, // Client Closed Request

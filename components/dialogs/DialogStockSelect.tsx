@@ -76,11 +76,19 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
                 signalKey: 'fetch-matched-symbols'
             }
         )
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status == 200) {
+                    return res.json();
+                }
+            })
             .then((data) => {
+                if (!data) {
+                    return;
+                }
+
                 setStocks(data);
                 setLoading(false);
-            })
+            });
     }
 
     function renderRow(props: ListChildComponentProps) {
