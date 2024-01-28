@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 type Props = {
     name: string;
     label: string;
-    options: Array<{ value: string; label: string }>;
+    options: Array<{ value: any; label: string }>;
     disabled?: boolean;
     control: any;
 };

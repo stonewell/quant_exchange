@@ -14,6 +14,7 @@ import { LoadingButton } from '@mui/lab';
 
 import FormBackTest from './FormBackTest'
 import FormSelectStock from './FormSelectStock'
+import FormTrading from './FormTrading'
 
 const steps = ['回测', '选股', '买入卖出', '风险控制'];
 
@@ -24,6 +25,7 @@ function _renderStepContent(step: number) {
     case 2:
       return <FormSelectStock />;
     case 3:
+      return <FormTrading />
     default:
       return <span>Not Found</span>;
   }
@@ -62,6 +64,11 @@ const validationSchema = [
   }),
   // Form 3
   Yup.object().shape({
+    tradingMethod: Yup.number().min(1).max(2).label('买入卖出'),
+    tradingInterval: Yup.number().min(1).label('调仓周期'),
+    stockCount: Yup.number().min(1).label('最大持仓股票数'),
+    buyMethod: Yup.number().min(1).max(2).label('买入方式'),
+    sellStockWillBuy: Yup.number().min(0).max(2).label('卖出要买入股票'),
   }),
   Yup.object().shape({
   }),
@@ -81,6 +88,11 @@ export default function HorizontalNonLinearStepper() {
       baseline: 'HS300',
       stockSelectMethod: 1,
       manualSelectedStocks: [],
+      tradingMethod: 1,
+      tradingInterval: 5,
+      stockCount: 6,
+      buyMethod: 1,
+      sellStockWillBuy: 0,
     },
   });
 
