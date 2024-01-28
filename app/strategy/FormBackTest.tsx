@@ -9,7 +9,7 @@ const backTestFrequents = [
   { label: '天', value: 'D' },
 ];
 const backTestBaselines = [
-  { label: '沪深300', value: 'HS300' },
+  { label: '沪深300', value: 'sh000300' },
 ];
 
 function FormBackTest() {

@@ -83,7 +83,7 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
             }
         )
             .then((res) => {
-                if (res.status == 200) {
+                if (res.status != 418) {
                     return res.json();
                 }
             })
