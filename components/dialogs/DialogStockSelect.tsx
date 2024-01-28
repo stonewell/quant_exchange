@@ -22,7 +22,7 @@ import Backdrop from '@mui/material/Backdrop';
 import { useFormContext } from 'react-hook-form';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
-import { uniqueFetch } from '@/components/tools/UniqueFetch';
+import { uniqueFetch, abortRequestSafe } from '@/components/tools/UniqueFetch';
 
 type Props = {
     handleClose: any;
@@ -67,13 +67,18 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
     }
 
     function onInputChange(event: any) {
+        const fetch_key = 'fetch-matched-symbols';
+
         if (event?.target?.value === '') {
+            abortRequestSafe(fetch_key);
+            setStocks([]);
+            setLoading(false);
             return;
         }
         setLoading(true);
         uniqueFetch(`/api/udf/search?query=${event.target.value}&limit=20&type=&exchange=`,
             {
-                signalKey: 'fetch-matched-symbols'
+                signalKey: fetch_key,
             }
         )
             .then((res) => {
