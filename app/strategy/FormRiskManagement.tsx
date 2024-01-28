@@ -21,7 +21,7 @@ function FormRiskManagement() {
           label='个股止损点（%）'
         />
         <FieldInputText
-          name='indexStockLoss'
+          name='indexStopLoss'
           control={control}
           label='沪深300平均止损点（日）'
         />

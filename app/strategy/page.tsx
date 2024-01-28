@@ -12,6 +12,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import dayjs, { Dayjs } from 'dayjs';
 import { LoadingButton } from '@mui/lab';
 
+var utc = require('dayjs/plugin/utc')
+dayjs.extend(utc)
+
+
 import FormBackTest from './FormBackTest'
 import FormSelectStock from './FormSelectStock'
 import FormTrading from './FormTrading'
@@ -90,7 +94,7 @@ export default function HorizontalNonLinearStepper() {
       timeRangeFrom: dayjs().subtract(3, 'month'),
       timeRangeTo: dayjs(),
       frequent: 'D',
-      baseline: 'HS300',
+      baseline: 'sh000300',
       stockSelectMethod: 1,
       manualSelectedStocks: [],
       tradingMethod: 1,
@@ -99,7 +103,7 @@ export default function HorizontalNonLinearStepper() {
       buyMethod: 1,
       sellStockWillBuy: 0,
       singleStockStopLoss: 20,
-      indexStockLoss: 126,
+      indexStopLoss: 126,
     },
   });
 
@@ -110,12 +114,38 @@ export default function HorizontalNonLinearStepper() {
   };
 
   const onSubmit = async (value: any) => {
-    const sleep = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
+    const url = '/api/backtest/run';
 
-    await sleep(2000).then(() => {
-      console.log('value', value);
-    });
+    console.log(JSON.stringify(value));
+
+    const postData = {
+      initialCapital: value.initialCapital,
+      timeRangeFrom: value.timeRangeFrom.utc(true).unix(),
+      timeRangeTo: value.timeRangeTo.utc(true).unix(),
+      frequent: value.frequent,
+      baseline: value.baseline,
+      stockSelectMethod: value.stockSelectMethod,
+      manualSelectedStocks: value.manualSelectedStocks.map((s: any) => s.ticker),
+      tradingMethod: value.tradingMethod,
+      tradingInterval: value.tradingInterval,
+      stockCount: value.stockCount,
+      buyMethod: value.buyMethod,
+      sellStockWillBuy: value.sellStockWillBuy,
+      singleStockStopLoss: value.singleStockStopLoss,
+      indexStopLoss: value.indexStopLoss,
+    };
+
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('value', data);
+      });
   };
 
   function _handleSubmit() {
