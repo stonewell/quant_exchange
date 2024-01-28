@@ -26,7 +26,6 @@ function FormTrading() {
     control,
     name: "tradingMethod",
   });
-  const [open, setOpen] = React.useState(false);
 
   const options = [
     {

@@ -15,6 +15,7 @@ import { LoadingButton } from '@mui/lab';
 import FormBackTest from './FormBackTest'
 import FormSelectStock from './FormSelectStock'
 import FormTrading from './FormTrading'
+import FormRiskManagement from './FormRiskManagement'
 
 const steps = ['回测', '选股', '买入卖出', '风险控制'];
 
@@ -26,6 +27,8 @@ function _renderStepContent(step: number) {
       return <FormSelectStock />;
     case 3:
       return <FormTrading />
+    case 4:
+      return <FormRiskManagement />
     default:
       return <span>Not Found</span>;
   }
@@ -71,6 +74,8 @@ const validationSchema = [
     sellStockWillBuy: Yup.number().min(0).max(2).label('卖出要买入股票'),
   }),
   Yup.object().shape({
+    singleStockStopLoss: Yup.number().min(1).max(100).label('个股止损点'),
+    indexStopLoss: Yup.number().min(1).label('沪深300平均止损点'),
   }),
 ];
 
@@ -93,6 +98,8 @@ export default function HorizontalNonLinearStepper() {
       stockCount: 6,
       buyMethod: 1,
       sellStockWillBuy: 0,
+      singleStockStopLoss: 20,
+      indexStockLoss: 126,
     },
   });
 
