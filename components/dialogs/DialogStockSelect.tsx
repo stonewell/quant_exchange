@@ -68,6 +68,7 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
 
     function onInputChange(event: any) {
         const fetch_key = 'fetch-matched-symbols';
+        const limit = 30;
 
         if (event?.target?.value === '') {
             abortRequestSafe(fetch_key);
@@ -76,7 +77,7 @@ export default function DialogStockSelect({ open, handleClose }: Props) {
             return;
         }
         setLoading(true);
-        uniqueFetch(`/api/udf/search?query=${event.target.value}&limit=20&type=&exchange=`,
+        uniqueFetch(`/api/udf/search?query=${event.target.value}&limit=${limit}&type=&exchange=`,
             {
                 signalKey: fetch_key,
             }
