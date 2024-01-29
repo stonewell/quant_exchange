@@ -62,7 +62,7 @@ const validationSchema = [
     manualSelectedStocks: Yup.array().of(Yup.object())
       .when('stockSelectMethod', ([stockSelectMethod], schema) => {
         if (stockSelectMethod == 1) {
-          return schema.min(1, '至少选择一支股票');
+          return schema.min(2, '至少选择两支股票');
         }
 
         return schema.min(0);
@@ -120,8 +120,8 @@ export default function HorizontalNonLinearStepper() {
 
     const postData = {
       initialCapital: value.initialCapital,
-      timeRangeFrom: value.timeRangeFrom.utc(true).unix(),
-      timeRangeTo: value.timeRangeTo.utc(true).unix(),
+      timeRangeFrom: value.timeRangeFrom.utc().unix(),
+      timeRangeTo: value.timeRangeTo.utc().unix(),
       frequent: value.frequent,
       baseline: value.baseline,
       stockSelectMethod: value.stockSelectMethod,

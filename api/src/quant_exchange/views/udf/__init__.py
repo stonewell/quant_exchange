@@ -130,9 +130,9 @@ class History(MethodView):
       }
 
     f = pd.Timestamp.fromtimestamp(args['f'],
-                                   'UTC').tz_localize(None).round('D')
+                                   'UTC').tz_localize(None).date()
     t = pd.Timestamp.fromtimestamp(args['t'],
-                                   'UTC').tz_localize(None).round('D')
+                                   'UTC').tz_localize(None).date()
     c = int(args['c']) if 'c' in args else -1
 
     print(args, f, t, c)
@@ -163,7 +163,7 @@ class History(MethodView):
         "s":
         "ok",
         "t": [
-            day.tz_localize('UTC').round('D').timestamp()
+            day.tz_localize('UTC').date().timestamp()
             for day in data['day'].to_list()
         ],
         "c": [d * price_adj for d in data['close'].to_list()],
