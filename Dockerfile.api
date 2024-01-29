@@ -1,6 +1,6 @@
 FROM python:3.11-slim AS base
 
-RUN apt update && apt install -y git
+RUN apt update && apt install -y git gcc
 
 WORKDIR /api
 COPY api/requirements.txt ./

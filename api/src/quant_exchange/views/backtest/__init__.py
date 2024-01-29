@@ -87,16 +87,16 @@ def to_date_string(d):
   dd = pd.to_datetime(dd).tz_localize(None)
   return dd.date().strftime('%Y-%m-%d')
 
+
 def to_chart_data(result, key):
   v = result[key]
 
   idx = v['index'].to_list()
   val = v[key].to_list()
 
-  return [
-    {
+  return [{
       'x': to_date_string(int(idx[i].timestamp())),
-    'y': val[i]
+      'y': val[i]
   } for i in range(len(idx))]
 
 
