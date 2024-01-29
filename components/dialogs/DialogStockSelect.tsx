@@ -25,193 +25,193 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { uniqueFetch, abortRequestSafe } from '@/components/tools/UniqueFetch';
 
 type Props = {
-    handleClose: any;
-    open: any;
+  handleClose: any;
+  open: any;
 };
 
 export default function DialogStockSelect({ open, handleClose }: Props) {
-    const [stocks, setStocks] = React.useState([]);
-    const [checked, setChecked] = React.useState([]);
-    const [loading, setLoading] = React.useState(false);
+  const [stocks, setStocks] = React.useState([]);
+  const [checked, setChecked] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
-    const { setValue, getValues } = useFormContext();
+  const { setValue, getValues } = useFormContext();
 
-    const handleToggle = (value: number) => () => {
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
+  const handleToggle = (value: number) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
 
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
-        setChecked(newChecked);
-    };
-
-    function onSelectStocks() {
-        if (checked.length == 0) {
-            handleClose();
-            setStocks([]);
-            setChecked([]);
-            return;
-        }
-
-        const manualSelectedStocks = getValues('manualSelectedStocks');
-        const selectedStocks = checked.map((index) => stocks[index]);
-
-        setValue('manualSelectedStocks', Array.from(new Set([...manualSelectedStocks, ...selectedStocks])));
-        handleClose();
-        setStocks([]);
-        setChecked([]);
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
     }
 
-    function onInputChange(event: any) {
-        const fetch_key = 'fetch-matched-symbols';
-        const limit = 30;
+    setChecked(newChecked);
+  };
 
-        if (event?.target?.value === '') {
-            abortRequestSafe(fetch_key);
-            setStocks([]);
-            setLoading(false);
-            return;
-        }
-        setLoading(true);
-        uniqueFetch(`/api/udf/search?query=${event.target.value}&limit=${limit}&type=&exchange=`,
-            {
-                signalKey: fetch_key,
-            }
-        )
-            .then((res) => {
-                if (res.status != 418) {
-                    return res.json();
-                }
-            })
-            .then((data) => {
-                if (!data) {
-                    return;
-                }
-
-                setStocks(data);
-                setLoading(false);
-            });
+  function onSelectStocks() {
+    if (checked.length == 0) {
+      handleClose();
+      setStocks([]);
+      setChecked([]);
+      return;
     }
 
-    function renderRow(props: ListChildComponentProps) {
-        const { index, style, data } = props;
-        const length = data?.length ? data?.length : 0;
+    const manualSelectedStocks = getValues('manualSelectedStocks');
+    const selectedStocks = checked.map((index) => stocks[index]);
 
-        if (index >= length) {
-            return;
+    setValue('manualSelectedStocks', Array.from(new Set([...manualSelectedStocks, ...selectedStocks])));
+    handleClose();
+    setStocks([]);
+    setChecked([]);
+  }
+
+  function onInputChange(event: any) {
+    const fetch_key = 'fetch-matched-symbols';
+    const limit = 30;
+
+    if (event?.target?.value === '') {
+      abortRequestSafe(fetch_key);
+      setStocks([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    uniqueFetch(`/api/udf/search?query=${event.target.value}&limit=${limit}&type=stock&exchange=`,
+      {
+        signalKey: fetch_key,
+      }
+    )
+      .then((res) => {
+        if (res.status != 418) {
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (!data) {
+          return;
         }
 
-        return (
-            <ListItem
-                style={style}
-                key={index}
-                component="div"
-                disablePadding
-                sx={{
-                    backgroundColor: '#fafafa',
-                    '&:not(:last-child)': {
-                        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                    },
-                    '@media (hover: none)': {
-                        '&:hover': {
-                            backgroundColor: '#ff0000',
-                        },
-                    },
-                    "&.Mui-selected": {
-                        backgroundColor: "red"
-                    },
-                }}
-                secondaryAction={
-                    <ListItemText
-                        primary={`${data[index].ticker}`}
-                    />
-                }
-            >
-                <ListItemButton
-                    role={undefined}
-                    onClick={handleToggle(index)}
-                    sx={{
-                        "&.Mui-selected": {
-                            backgroundColor: '#F7921C'
-                        },
-                    }}
-                >
-                    <ListItemIcon>
-                        <Checkbox
-                            edge="start"
-                            disableRipple
-                            checked={checked.indexOf(index) !== -1}
-                            tabIndex={-1}
-                            inputProps={{ 'aria-labelledby': `checkbox-list-label-${index}` }}
-                        />
-                    </ListItemIcon>
-                    <ListItemAvatar>
-                        <Avatar>
-                            <ShowChartIcon />
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={`${data[index].description}`}
-                    />
-                </ListItemButton>
-            </ListItem>
-        );
-    }
+        setStocks(data);
+        setLoading(false);
+      });
+  }
 
+  function renderRow(props: ListChildComponentProps) {
+    const { index, style, data } = props;
+    const length = data?.length ? data?.length : 0;
+
+    if (index >= length) {
+      return;
+    }
 
     return (
-        <React.Fragment>
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                fullWidth
-                disableRestoreFocus
-                maxWidth="md"
-            >
-                <DialogTitle>股票</DialogTitle>
-                <DialogContent sx={{
-                    minHeight: 400,
-                }}
-                >
-                    <DialogContentText>
-                        输入股票代码或者名称缩写,在列表里选择对应的股票
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="stock_id"
-                        name="stock_id"
-                        label="股票代码或者名称缩写"
-                        fullWidth
-                        variant="standard"
-                        onChange={onInputChange}
-                    />
-                    <Divider />
-                    <FixedSizeList
-                        height={400}
-                        itemSize={46}
-                        itemData={stocks}
-                        itemCount={stocks?.length ? stocks?.length : 0}
-                        overscanCount={5}
-                        fullWidth
-                    >
-                        {renderRow}
-                    </FixedSizeList>
-                    <Backdrop
-                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                        open={loading}
-                    >
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={onSelectStocks}>确定</Button>
-                </DialogActions>
-            </Dialog>
-        </React.Fragment >
+      <ListItem
+        style={style}
+        key={index}
+        component="div"
+        disablePadding
+        sx={{
+          backgroundColor: '#fafafa',
+          '&:not(:last-child)': {
+            borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+          },
+          '@media (hover: none)': {
+            '&:hover': {
+              backgroundColor: '#ff0000',
+            },
+          },
+          "&.Mui-selected": {
+            backgroundColor: "red"
+          },
+        }}
+        secondaryAction={
+          <ListItemText
+            primary={`${data[index].ticker}`}
+          />
+        }
+      >
+        <ListItemButton
+          role={undefined}
+          onClick={handleToggle(index)}
+          sx={{
+            "&.Mui-selected": {
+              backgroundColor: '#F7921C'
+            },
+          }}
+        >
+          <ListItemIcon>
+            <Checkbox
+              edge="start"
+              disableRipple
+              checked={checked.indexOf(index) !== -1}
+              tabIndex={-1}
+              inputProps={{ 'aria-labelledby': `checkbox-list-label-${index}` }}
+            />
+          </ListItemIcon>
+          <ListItemAvatar>
+            <Avatar>
+              <ShowChartIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={`${data[index].description}`}
+          />
+        </ListItemButton>
+      </ListItem>
     );
+  }
+
+
+  return (
+    <React.Fragment>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullWidth
+        disableRestoreFocus
+        maxWidth="md"
+      >
+        <DialogTitle>股票</DialogTitle>
+        <DialogContent sx={{
+          minHeight: 400,
+        }}
+        >
+          <DialogContentText>
+            输入股票代码或者名称缩写,在列表里选择对应的股票
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="stock_id"
+            name="stock_id"
+            label="股票代码或者名称缩写"
+            fullWidth
+            variant="standard"
+            onChange={onInputChange}
+          />
+          <Divider />
+          <FixedSizeList
+            height={400}
+            itemSize={46}
+            itemData={stocks}
+            itemCount={stocks?.length ? stocks?.length : 0}
+            overscanCount={5}
+            fullWidth
+          >
+            {renderRow}
+          </FixedSizeList>
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={loading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onSelectStocks}>确定</Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment >
+  );
 }
