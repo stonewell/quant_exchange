@@ -12,7 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import dayjs, { Dayjs } from 'dayjs';
 import { LoadingButton } from '@mui/lab';
 
-import { VictoryChart, VictoryLine, VictoryZoomContainer } from 'victory';
+import { VictoryChart, VictoryLine, VictoryZoomContainer, VictoryTheme, VictoryLegend, VictoryAxis } from 'victory';
 
 var utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
@@ -171,7 +171,66 @@ export default function HorizontalNonLinearStepper() {
   const parentStyle: React.CSSProperties = {
     border: "1px solid #ccc",
     margin: "2%",
-    maxWidth: "80%",
+    maxWidth: "100%",
+  };
+
+  const BackTestChart = () => {
+    const [width, setWidth] = React.useState(0);
+
+    const graphRef = React.useCallback((node: any) => {
+      if (node !== null) {
+        setWidth(node.getBoundingClientRect().width);
+      }
+    }, []);
+
+    const updateWidth = (ev: any) => {
+      setWidth(ev.target.innerWidth);
+    };
+
+    React.useEffect(() => {
+      window.addEventListener('resize', updateWidth);
+
+      return () => {
+        window.removeEventListener('resize', updateWidth);
+      };
+    }, []);
+
+    return (
+      <div ref={graphRef}>
+        <VictoryChart
+          width={width}
+          height={400}
+          theme={VictoryTheme.material}
+          containerComponent={
+            <VictoryZoomContainer
+              responsive={false}
+            />
+          }
+        >
+          <VictoryLegend x={280} y={0}
+            orientation="horizontal"
+            gutter={50}
+            style={{ title: { fontSize: 20 } }}
+            data={[
+              { name: "策略回报", symbol: { fill: "blue" } },
+              { name: "基准回报", symbol: { fill: "purple" } }
+            ]}
+          />
+          <VictoryLine
+            style={{ data: { stroke: "blue" } }}
+            data={chartData.custom}
+          />
+          <VictoryLine
+            style={{ data: { stroke: "purple" } }}
+            data={chartData.baseline}
+          />
+          <VictoryAxis
+            dependentAxis />
+          <VictoryAxis
+            fixLabelOverlap={true} />
+        </VictoryChart>
+      </div>
+    );
   };
 
   return (
@@ -215,24 +274,7 @@ export default function HorizontalNonLinearStepper() {
         </form>
       </FormProvider >
       {chartData && (
-        <VictoryChart
-          style={{ parent: parentStyle }}
-          containerComponent={
-            <VictoryZoomContainer
-              responsive={true}
-              zoomDimension="x"
-              allowZoom={false}
-            />
-          }
-        >
-          <VictoryLine
-            style={{ data: { stroke: "#c43a31", strokeLinecap: "round" } }}
-            data={chartData.custom}
-          />
-          <VictoryLine
-            data={chartData.baseline}
-          />
-        </VictoryChart>
+        <BackTestChart />
       )}
     </Box >
   );

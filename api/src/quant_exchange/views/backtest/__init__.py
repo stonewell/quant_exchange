@@ -95,7 +95,7 @@ def to_chart_data(result, key):
 
   return [
     {
-      'x': int(idx[i].timestamp()),
+      'x': to_date_string(int(idx[i].timestamp())),
     'y': val[i]
   } for i in range(len(idx))]
 
