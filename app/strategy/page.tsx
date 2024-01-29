@@ -12,6 +12,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import dayjs, { Dayjs } from 'dayjs';
 import { LoadingButton } from '@mui/lab';
 
+import { VictoryChart, VictoryLine, VictoryZoomContainer } from 'victory';
+
 var utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
 
@@ -86,6 +88,7 @@ const validationSchema = [
 export default function HorizontalNonLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const currentValidationSchema = validationSchema[activeStep];
+  const [chartData, setChartData] = React.useState();
 
   const formProps = useForm({
     resolver: yupResolver(currentValidationSchema),
@@ -145,6 +148,7 @@ export default function HorizontalNonLinearStepper() {
       .then((res) => res.json())
       .then((data) => {
         console.log('value', data);
+        setChartData(data);
       });
   };
 
@@ -162,6 +166,13 @@ export default function HorizontalNonLinearStepper() {
     }
     setActiveStep(activeStep - 1);
   }
+
+
+  const parentStyle: React.CSSProperties = {
+    border: "1px solid #ccc",
+    margin: "2%",
+    maxWidth: "80%",
+  };
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -203,6 +214,26 @@ export default function HorizontalNonLinearStepper() {
           </div>
         </form>
       </FormProvider >
+      {chartData && (
+        <VictoryChart
+          style={{ parent: parentStyle }}
+          containerComponent={
+            <VictoryZoomContainer
+              responsive={true}
+              zoomDimension="x"
+              allowZoom={false}
+            />
+          }
+        >
+          <VictoryLine
+            style={{ data: { stroke: "#c43a31", strokeLinecap: "round" } }}
+            data={chartData.custom}
+          />
+          <VictoryLine
+            data={chartData.baseline}
+          />
+        </VictoryChart>
+      )}
     </Box >
   );
 }

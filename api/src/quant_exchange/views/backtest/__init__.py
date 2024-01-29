@@ -74,11 +74,31 @@ def filter_dataframe(data, start_date=None, end_date=None):
 
   return data[(data.index >= start_date) & (data.index <= end_date)]
 
+
 def normalize_date(d):
   dd = datetime.datetime.fromtimestamp(d)
 
   dd = pd.to_datetime(dd).tz_localize(None)
   return dd.date()
+
+
+def to_date_string(d):
+  dd = datetime.datetime.fromtimestamp(d)
+  dd = pd.to_datetime(dd).tz_localize(None)
+  return dd.date().strftime('%Y-%m-%d')
+
+def to_chart_data(result, key):
+  v = result[key]
+
+  idx = v['index'].to_list()
+  val = v[key].to_list()
+
+  return [
+    {
+      'x': int(idx[i].timestamp()),
+    'y': val[i]
+  } for i in range(len(idx))]
+
 
 blp = Blueprint("BackTest",
                 __name__,
@@ -107,6 +127,9 @@ class BackTests(MethodView):
 
     result = {}
     for key in res:
-      result[key] = json.loads(res[key].daily_prices.to_json())
+      result[key] = res[key].daily_prices.reset_index()
 
-    return result
+    return {
+        'baseline': to_chart_data(result, 'baseline'),
+        'custom': to_chart_data(result, 'custom'),
+    }
