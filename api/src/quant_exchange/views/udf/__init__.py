@@ -130,9 +130,9 @@ class History(MethodView):
       }
 
     f = pd.Timestamp.fromtimestamp(args['f'],
-                                   'UTC').tz_localize(None).date()
+                                   'UTC').tz_localize(None)
     t = pd.Timestamp.fromtimestamp(args['t'],
-                                   'UTC').tz_localize(None).date()
+                                   'UTC').tz_localize(None)
     c = int(args['c']) if 'c' in args else -1
 
     print(args, f, t, c)
@@ -142,6 +142,7 @@ class History(MethodView):
     d = load_stock_data(args['s'], False)
     data = d.reset_index()
 
+    print(t, data.iloc[0]['day'])
     if data.empty or t < data.iloc[0]['day']:
       return {
           "s": "no_data",
@@ -163,7 +164,7 @@ class History(MethodView):
         "s":
         "ok",
         "t": [
-            day.tz_localize('UTC').date().timestamp()
+            day.tz_localize('UTC').timestamp()
             for day in data['day'].to_list()
         ],
         "c": [d * price_adj for d in data['close'].to_list()],
