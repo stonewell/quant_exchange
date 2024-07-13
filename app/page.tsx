@@ -8,44 +8,22 @@ import ListItem from '@mui/material/ListItem';
 import Link from 'next/link';
 
 export default function HomePage() {
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <div>
-        <Grid container rowSpacing={3} columnSpacing={3}>
-          <Grid xs={6}>
-            <Link href='/charting'>历史行情</Link>
-          </Grid>
-          <Grid xs={6}>
-            <Link href='/strategy'>策略向导</Link>
-          </Grid>
-          <Grid xs={6}>
-          </Grid>
-          <Grid xs={6}>
-          </Grid>
-        </Grid>
-      </div>
-      <Drawer
-        sx={{
-          width: 320,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 320,
-            boxSizing: 'border-box',
-            top: ['48px', '56px', '64px'],
-            height: 'auto',
-            bottom: 0,
-          },
-        }}
-        variant="permanent"
-        anchor="right"
-      >
-        <List sx={{ px: 2 }}>
-          <ListItem disablePadding>
-            <Typography variant="overline" sx={{ fontWeight: 500 }}>
-            </Typography>
-          </ListItem>
-        </List>
-      </Drawer>
-    </Box>
-  );
+    return (
+        <Box sx={{ display: 'flex' }}>
+            <div>
+                <Grid container rowSpacing={3} columnSpacing={3}>
+                    <Grid xs={6}>
+                        <Link href='/charting'>历史行情</Link>
+                    </Grid>
+                    <Grid xs={6}>
+                        <Link href='/strategy'>策略向导</Link>
+                    </Grid>
+                    <Grid xs={6}>
+                    </Grid>
+                    <Grid xs={6}>
+                    </Grid>
+                </Grid>
+            </div>
+        </Box>
+    );
 }
