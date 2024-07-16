@@ -72,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                     Quant Exchange - powered by TradingView
                                 </Typography>
                             </Toolbar>
+                            <Divider />
 
                             <Box sx=
                                 {{
@@ -91,7 +92,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                         boxSizing: 'border-box',
                                     }}
                                 >
-                                    <Divider />
                                     <List>
                                         {LINKS.map(({ text, href, icon: Icon }) => (
                                             <ListItem key={href} disablePadding>
@@ -106,7 +106,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                     </List>
                                     <Box sx={{ flexGrow: 1 }}>
                                     </Box>
-                                    <Divider sx={{ mt: 'auto' }} />
                                     <Paper variant="outlined"
                                         elevation={3}
                                         sx={{

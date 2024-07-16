@@ -50,8 +50,14 @@ def load_history_from_file(data_file):
   df['day'] = df['day'].apply(
       lambda day: pd.to_datetime(day, format='%Y-%m-%d'))
 
+  def to_float(v):
+    try:
+      return float(v)
+    except:
+      return 0.0
+
   for c in ['open', 'high', 'low', 'close', 'volume']:
-    df[c] = df[c].apply(float)
+    df[c] = df[c].apply(to_float)
 
   return df.set_index('day').sort_index()
 
