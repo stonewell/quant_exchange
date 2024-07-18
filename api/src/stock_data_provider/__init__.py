@@ -59,9 +59,6 @@ def load_history_from_file(data_file):
   for c in ['open', 'high', 'low', 'close', 'volume']:
     df[c] = df[c].apply(to_float)
 
-  if data_file.as_posix().find('bao_history_') >= 0:
-    df['volume'] = df['volume'].apply(lambda v: v / 100.0)
-
   return df.set_index('day').sort_index()
 
 
