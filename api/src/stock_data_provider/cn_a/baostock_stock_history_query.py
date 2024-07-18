@@ -14,35 +14,6 @@ def convert_symbol(symbol):
   return f'{symbol[:2]}.{symbol[2:]}'
 
 
-def load_stock_history(symbol,
-                       start_date,
-                       end_date,
-                       data_path=g_data_path,
-                       force_update=False):
-  history_path = pathlib.Path(
-      data_path
-  ) / symbol / f'bao_history_{start_date.replace("-", "")}_{end_date.replace("-", "")}'
-
-  history_path = to_history_file_path(history_path)
-  if history_path.exists() and not force_update:
-    return load_history_from_file(history_path)
-
-  lg = bs.login()
-
-  if lg.error_code != '0':
-    raise ValueError('baostock login failed:{}, {}'.format(
-        lg.error_code, lg.error_msg))
-
-  try:
-    result = __load_stock_history(symbol, start_date, end_date)
-    pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
-    save_history_to_file(history_path, result)
-
-    return load_history_from_file(history_path)
-  finally:
-    bs.logout()
-
-
 def __load_stock_history(symbol, start_date, end_date):
   rs = bs.query_history_k_data_plus(convert_symbol(symbol),
                                     "date,open,high,low,close,volume",
@@ -66,7 +37,7 @@ def __load_stock_history(symbol, start_date, end_date):
       index_stocks, columns=['day', 'open', 'high', 'low', 'close', 'volume'])
   result['day'] = result['day'].apply(
       lambda day: pd.to_datetime(day, format='%Y-%m-%d'))
-  result['volume'] = result['volume'].apply(lambda v: v / 100.0)
+  result['volume'] = result['volume'].apply(lambda v: float(v) / 100.0)
 
   return result
 
@@ -88,14 +59,38 @@ def load_all_stock_history(start_date, end_date, data_path=g_data_path):
       if not symbol[:2] in ['sh', 'sz']:
         print(f'skip {symbol}')
         continue
-      result = __load_stock_history(symbol, start_date, end_date)
-      history_path = pathlib.Path(
-          data_path
-      ) / symbol / f'bao_history_{start_date.replace("-", "")}_{end_date.replace("-", "")}'
 
-      save_history_to_file(history_path, result)
+      __download_stock_history(symbol, start_date, end_date)
   finally:
     bs.logout()
+
+def download_stock_history(symbol, start_date, end_date, data_path=g_data_path):
+  lg = bs.login()
+
+  if lg.error_code != '0':
+    raise ValueError('baostock login failed:{}, {}'.format(
+        lg.error_code, lg.error_msg))
+  try:
+    return __download_stock_history(symbol, start_date, end_date, data_path)
+  finally:
+    bs.logout()
+
+def __download_stock_history(symbol, start_date, end_date, data_path=g_data_path):
+  result = __load_stock_history(symbol, start_date, end_date)
+
+  if result.empty:
+    return (False, None)
+
+  start_date = result.head(1)['day'].item().strftime('%Y%m%d')
+  end_date = result.tail(1)['day'].item().strftime('%Y%m%d')
+
+  history_path = pathlib.Path(
+    data_path
+  ) / symbol / f'bao_history_{start_date.replace("-", "")}_{end_date.replace("-", "")}'
+
+  save_history_to_file(history_path, result)
+
+  return (True, load_history_from_file(history_path))
 
 
 def normalize_history_volume(data_path=g_data_path):

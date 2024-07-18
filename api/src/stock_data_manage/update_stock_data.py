@@ -44,7 +44,7 @@ def merge_stock_data(symbol, _data_path, vipdoc_path_list):
   save_history_to_file(history_path, all_df)
 
 
-if __name__ == '__main__':
+def merge_vipdoc_data():
   df = load_stock_info()
 
   # merge_stock_data(
@@ -56,3 +56,6 @@ if __name__ == '__main__':
     merge_stock_data(
         row['exchange'] + row['symbol'], g_data_path,
         ['/media/share/win/vipdoc', '/media/share/win/vipdoc_2015_2022'])
+
+if __name__ == '__main__':
+  pass
