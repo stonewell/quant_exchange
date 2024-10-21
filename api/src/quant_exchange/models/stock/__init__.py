@@ -4,6 +4,7 @@ import marshmallow as ma
 class StockSchema(ma.Schema):
     id = ma.fields.String()
     name = ma.fields.String()
+    ticker = ma.fields.String()
     attrs = ma.fields.List(ma.fields.String())
 
 class StockDataSchema(ma.Schema):
@@ -20,3 +21,11 @@ class StocksQueryArgsSchema(ma.Schema):
 class StockQueryArgsSchema(ma.Schema):
     start_date=ma.fields.Date()
     end_date=ma.fields.Date()
+
+class StockWatchListQueryArgsSchema(ma.Schema):
+    symbols = ma.fields.List(ma.fields.String(), data_key='s')
+
+class StockWatchListDataSchema(ma.Schema):
+  name = ma.fields.String(data_key='n')
+  price = ma.fields.Float(data_key='p')
+  change = ma.fields.Float(data_key='c')
