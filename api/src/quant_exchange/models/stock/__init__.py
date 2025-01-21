@@ -26,6 +26,7 @@ class StockWatchListQueryArgsSchema(ma.Schema):
     symbols = ma.fields.List(ma.fields.String(), data_key='s')
 
 class StockWatchListDataSchema(ma.Schema):
+  symbol = ma.fields.String(data_key='s')
   name = ma.fields.String(data_key='n')
   price = ma.fields.Float(data_key='p')
   change = ma.fields.Float(data_key='c')

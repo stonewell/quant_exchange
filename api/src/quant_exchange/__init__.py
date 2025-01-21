@@ -4,6 +4,7 @@ load_dotenv()
 
 from flask import Flask
 from flask_caching import Cache
+from flask_cors import CORS
 
 from . import context
 
@@ -18,6 +19,8 @@ def create_app():
   app.config["CACHE_TYPE"] = "SimpleCache"
   app.config["CACHE_DEFAULT_TIMEOUT"] = 300
   app.config.from_prefixed_env()
+
+  CORS(app);
 
   context.cache = Cache(app)
 

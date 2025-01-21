@@ -10,3 +10,4 @@ pypinyin
 Flask-Caching
 pyarrow
 bt
+flask-cors

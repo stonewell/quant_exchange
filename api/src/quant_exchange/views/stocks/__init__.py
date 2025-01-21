@@ -143,7 +143,8 @@ def get_watch_data(row):
     price = df_data.iloc[0]['close']
 
   return {
-        'name': name,
-        'price': price,
-        'change': change,
+    'symbol': row['symbol'],
+    'name': name,
+    'price': price,
+    'change': change,
   }
